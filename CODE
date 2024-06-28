@@ -1,0 +1,82 @@
+class Account:
+    def __init__(self, acc_number, pin, balance=0):
+        self.acC_number = acc_number
+        self.pin = pin
+        self.balance = balance
+
+    def check_pin(self, pin):
+        return self.pin == pin
+
+    def deposit(self, amount):
+        self.balance += amount
+        return self.balance
+
+    def withdraw(self, amount):
+        if amount > self.balance:
+            return False
+        else:
+            self.balance -= amount
+            return True
+
+    def get_balance(self):
+        return self.balance
+
+
+class ATM:
+    def __init__(self):
+        self.accounts = {}
+
+    def add_account(self, account):
+        self.accounts[account.acc_number] = account
+
+    def authenticate(self, acc_number, pin):
+        account = self.accounts.get(acc_number)
+        if account and account.check_pin(pin):
+            return account
+        else:
+            return None
+
+    def run(self):
+        print("Welcome to the ATM!")
+        account_number = input("Enter your account number: ")
+        pin = input("Enter your PIN: ")
+        account = self.authenticate(acc_number, pin)
+        if account:
+            print("Authentication successful!")
+            while True:
+                print("\n1. Check Balance")
+                print("\n2. Deposit")
+                print("\n3. Withdraw")
+                print("\n4. Exit")
+                choice = input("Enter your choice: ")
+                if choice == '1':
+                    print(f"Your balance is: ${account.get_balance()}")
+                elif choice == '2':
+                    amount = float(input("Enter amount to deposit: "))
+                    new_balance = account.deposit(amount)
+                    print(f"Deposited ${amount}. New balance is: ${new_balance}")
+                elif choice == '3':
+                    amount = float(input("Enter amount to withdraw: "))
+                    if account.withdraw(amount):
+                        print(f"Withdrew ${amount}. New balance is: ${account.get_balance()}")
+                    else:
+                        print("Insufficient balance.")
+                elif choice == '4':
+                    print("Thank you for using the ATM!")
+                    break
+                else:
+                    print("Invalid choice. Please try again.")
+        else:
+            print("Authentication failed. Please check your account number and PIN.")
+
+
+# Setting up accounts and running the ATM
+account1 = Account("123456", "1234", 1000)
+account2 = Account("654321", "4321", 500)
+
+atm = ATM()
+atm.add_account(account1)
+atm.add_account(account2)
+
+atm.run()
+
